@@ -1,0 +1,2318 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+
+<head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Presupuesto Agrisem</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Paleta actual: todos los pares texto/fondo cumplen contraste AA (4.5:1). */
+        :root {
+            --verde: #1B6B3A;
+            --verde-oscuro: #124A28;
+            --verde-claro: #E6F2EA;
+            --texto: #1c2a22;
+            --gris: #55645b;
+            --linea: #d3dcd6;
+            --fondo: #f5f7f5;
+            --blanco: #ffffff;
+            --rojo: #9F1D16;
+            --rojo-fondo: #FBE4E1;
+            --amarillo: #7A5600;
+            --amarillo-fondo: #FFF1BF;
+            --sinpres: #34416F;
+            --sinpres-fondo: #E4E8F5;
+            --neutro: #4a554e;
+            --neutro-fondo: #E9ECEA;
+            /* Tres niveles tipográficos */
+            --t1: 28px;
+            /* título de vista y valores de KPI */
+            --t2: 16px;
+            /* cuerpo y tablas */
+            --t3: 13px;
+            /* etiquetas, notas, encabezados de tabla */
+            /* Escala de espacio (múltiplos de 8) */
+            --e1: 8px;
+            --e2: 16px;
+            --e3: 24px;
+            --e4: 32px;
+        }
+
+        @media (max-width: 640px) {
+            :root {
+                --t1: 22px;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            font-size: var(--t2);
+            color: var(--texto);
+            background: var(--fondo);
+            line-height: 1.45;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--verde);
+            outline-offset: 2px;
+        }
+
+        /* ---- Encabezado y navegación ---- */
+        header {
+            background: var(--verde);
+            color: #fff;
+            padding: var(--e2) var(--e4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--e2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: var(--t1);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        header .ciclo {
+            font-size: var(--t2);
+            color: #D6F0DE;
+            margin-top: 2px;
+        }
+
+        header button {
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, .7);
+            border-radius: 6px;
+            padding: 0 var(--e2);
+            min-height: 40px;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        header button:hover {
+            background: rgba(255, 255, 255, .15);
+        }
+
+        nav {
+            background: var(--verde-oscuro);
+            padding: 0 var(--e4);
+            display: flex;
+            gap: 4px;
+            position: sticky;
+            top: 0;
+            z-index: 30;
+        }
+
+        nav button {
+            background: transparent;
+            color: #cfe5d6;
+            border: 0;
+            border-bottom: 4px solid transparent;
+            padding: 0 var(--e3);
+            min-height: 48px;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        nav button.activa {
+            color: #fff;
+            border-bottom-color: #8fd1a5;
+            font-weight: 600;
+        }
+
+        nav button:hover {
+            color: #fff;
+        }
+
+        main {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: var(--e3) var(--e4) 48px;
+        }
+
+        /* ---- Títulos: pregunta de negocio + conclusión ---- */
+        .kicker {
+            font-size: var(--t3);
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: var(--gris);
+            font-weight: 600;
+            margin: var(--e4) 0 4px;
+        }
+
+        main>.kicker:first-child,
+        .miga+.kicker {
+            margin-top: 0;
+        }
+
+        h2.titulo {
+            margin: 0 0 var(--e3);
+            font-size: var(--t1);
+            line-height: 1.25;
+            font-weight: 700;
+            color: var(--verde-oscuro);
+        }
+
+        h3.sec.suelto {
+            margin-top: var(--e4);
+        }
+
+        h3.sec {
+            margin: 0 0 var(--e1);
+            font-size: var(--t2);
+            line-height: 1.4;
+            font-weight: 700;
+            color: var(--verde-oscuro);
+        }
+
+        .nota {
+            font-size: var(--t3);
+            color: var(--gris);
+            margin-top: var(--e1);
+        }
+
+        .unidad {
+            font-size: var(--t3);
+            color: var(--gris);
+            margin: 0 0 var(--e1);
+        }
+
+        .miga {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: var(--e2);
+            color: var(--gris);
+        }
+
+        .miga a,
+        .enlace {
+            color: var(--verde);
+            cursor: pointer;
+            text-decoration: underline;
+            background: none;
+            border: 0;
+            font: inherit;
+            padding: 0;
+        }
+
+        .miga a:hover {
+            color: var(--verde-oscuro);
+        }
+
+        /* ---- KPI ---- */
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: var(--e2);
+            margin-bottom: var(--e3);
+        }
+
+        .kpi {
+            background: var(--blanco);
+            border: 1px solid var(--linea);
+            border-top: 4px solid #8aa395;
+            border-radius: 8px;
+            padding: var(--e2);
+            min-width: 0;
+        }
+
+        .kpis.n3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .kpis.n4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .kpi .val.chico {
+            font-size: var(--t2);
+            white-space: normal;
+        }
+
+        .kpi.con {
+            border-top-color: var(--verde);
+        }
+
+        .kpi.sin {
+            border-top-color: var(--sinpres);
+        }
+
+        .kpi.exp {
+            border-top-color: var(--rojo);
+        }
+
+        .kpi.tot {
+            border-top-color: var(--verde-oscuro);
+        }
+
+        .kpi .et {
+            font-size: var(--t3);
+            color: var(--gris);
+            font-weight: 600;
+        }
+
+        .kpi .val {
+            font-size: var(--t1);
+            font-weight: 700;
+            line-height: 1.15;
+            margin: 4px 0;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .hero {
+            background: var(--blanco);
+            border: 1px solid var(--linea);
+            border-left: 6px solid var(--rojo);
+            border-radius: 8px;
+            padding: var(--e3) var(--e4);
+            margin-bottom: var(--e3);
+        }
+
+        .hero.ok {
+            border-left-color: var(--verde);
+        }
+
+        .hero .et {
+            font-size: var(--t3);
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: var(--gris);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .hero .cifra {
+            font-size: 52px;
+            font-weight: 700;
+            line-height: 1.05;
+            color: var(--rojo);
+            font-variant-numeric: tabular-nums;
+            margin: 0 0 4px;
+        }
+
+        .hero.ok .cifra {
+            color: var(--verde-oscuro);
+        }
+
+        .hero .narr {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--texto);
+            margin-bottom: var(--e2);
+        }
+
+        .hero .desc {
+            display: flex;
+            gap: var(--e3);
+            flex-wrap: wrap;
+            font-size: var(--t3);
+            color: var(--gris);
+            border-top: 1px solid var(--linea);
+            padding-top: var(--e2);
+        }
+
+        .hero .desc span strong {
+            color: var(--texto);
+            font-weight: 700;
+            display: block;
+            font-size: var(--t2);
+            margin-top: 2px;
+        }
+
+        .contexto-sinpres {
+            background: var(--blanco);
+            border: 1px solid var(--linea);
+            border-left: 4px solid var(--sinpres);
+            border-radius: 8px;
+            padding: var(--e2) var(--e3);
+            margin-bottom: var(--e3);
+        }
+
+        .contexto-sinpres .cab {
+            display: flex;
+            align-items: baseline;
+            gap: var(--e2);
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .contexto-sinpres .tit {
+            font-size: var(--t2);
+            font-weight: 700;
+            color: var(--sinpres);
+        }
+
+        .contexto-sinpres .res {
+            font-size: var(--t3);
+            color: var(--gris);
+        }
+
+        .contexto-sinpres ol {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            counter-reset: top;
+        }
+
+        .contexto-sinpres li {
+            counter-increment: top;
+            display: grid;
+            grid-template-columns: 24px 1fr auto auto;
+            gap: var(--e1) var(--e2);
+            align-items: baseline;
+            padding: 6px 0;
+            border-bottom: 1px dashed var(--linea);
+            cursor: pointer;
+        }
+
+        .contexto-sinpres li:last-of-type {
+            border-bottom: 0;
+        }
+
+        .contexto-sinpres li:hover {
+            background: #f0f6f2;
+        }
+
+        .contexto-sinpres li::before {
+            content: counter(top);
+            font-weight: 700;
+            color: var(--sinpres);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .contexto-sinpres .n-cuenta {
+            font-weight: 600;
+        }
+
+        .contexto-sinpres .n-sub {
+            grid-column: 2;
+            font-size: var(--t3);
+            color: var(--gris);
+        }
+
+        .contexto-sinpres .n-monto {
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .contexto-sinpres .n-pct {
+            font-size: var(--t3);
+            color: var(--gris);
+            font-variant-numeric: tabular-nums;
+            min-width: 48px;
+            text-align: right;
+        }
+
+        .contexto-sinpres .pie {
+            font-size: var(--t3);
+            color: var(--gris);
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--linea);
+        }
+
+        .contexto-sinpres .pie strong {
+            color: var(--texto);
+        }
+
+        @media (max-width: 640px) {
+            .hero {
+                padding: var(--e2);
+            }
+
+            .hero .cifra {
+                font-size: 36px;
+            }
+
+            .hero .narr {
+                font-size: 16px;
+            }
+
+            .hero .desc {
+                gap: var(--e2);
+            }
+        }
+
+        .arriba {
+            color: var(--rojo);
+            font-weight: 700;
+        }
+
+        .abajo {
+            color: var(--verde-oscuro);
+            font-weight: 700;
+        }
+
+        /* ---- Puente (barras horizontales, responsivo) ---- */
+        .panel {
+            background: var(--blanco);
+            border: 1px solid var(--linea);
+            border-radius: 8px;
+            padding: var(--e2) var(--e3);
+        }
+
+        .p-fila {
+            display: grid;
+            grid-template-columns: 20px minmax(170px, 230px) minmax(0, 1fr) 96px;
+            grid-template-areas: "op et pista val" ". sub pista pct";
+            gap: 2px var(--e2);
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .p-op {
+            grid-area: op;
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 1;
+            color: var(--gris);
+        }
+
+        .p-et {
+            grid-area: et;
+            font-weight: 600;
+            line-height: 1.2;
+            align-self: end;
+        }
+
+        .p-sub {
+            grid-area: sub;
+            font-weight: 400;
+            font-size: var(--t3);
+            color: var(--gris);
+            align-self: start;
+        }
+
+        .p-pista {
+            grid-area: pista;
+            position: relative;
+            height: 30px;
+            background: #eef2ef;
+            border-radius: 4px;
+        }
+
+        .p-barra {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            border-radius: 4px;
+            min-width: 3px;
+        }
+
+        .p-marca {
+            position: absolute;
+            top: -3px;
+            bottom: -3px;
+            width: 2px;
+            background: #0f291b;
+            opacity: .5;
+        }
+
+        .p-val {
+            grid-area: val;
+            text-align: right;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+            align-self: end;
+        }
+
+        .p-pct {
+            grid-area: pct;
+            text-align: right;
+            font-size: var(--t3);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+            align-self: start;
+            color: var(--gris);
+        }
+
+        .p-fila.subtotal {
+            border-top: 2px solid var(--verde);
+            margin-top: 4px;
+            padding-top: 10px;
+        }
+
+        .p-fila.subtotal .p-et,
+        .p-fila.subtotal .p-val {
+            font-weight: 700;
+            font-size: 17px;
+        }
+
+        .p-fila.clicable {
+            cursor: pointer;
+            border-radius: 6px;
+            margin: 0 -8px;
+            padding-left: 8px;
+            padding-right: 8px;
+            transition: background .15s;
+        }
+
+        .p-fila.clicable:hover {
+            background: #f0f6f2;
+        }
+
+        .p-fila.clicable:hover .p-et::after {
+            content: " ›";
+            color: var(--verde);
+            font-weight: 700;
+        }
+
+        .p-sep {
+            border-top: 1px dashed var(--linea);
+            margin: 10px 0 2px;
+            padding-top: 8px;
+            font-size: var(--t3);
+            color: var(--gris);
+            font-weight: 600;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        .rayas {
+            background: repeating-linear-gradient(45deg, var(--sinpres), var(--sinpres) 4px, #6b79b3 4px, #6b79b3 8px);
+        }
+
+        /* ---- Tablas ---- */
+        .tabla-caja {
+            overflow-x: auto;
+            background: var(--blanco);
+            border: 1px solid var(--linea);
+            border-radius: 8px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: var(--t2);
+        }
+
+        th,
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--linea);
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        td {
+            overflow-wrap: anywhere;
+        }
+
+        th {
+            background: var(--verde-claro);
+            color: var(--verde-oscuro);
+            font-weight: 600;
+            font-size: var(--t3);
+            white-space: nowrap;
+        }
+
+        th.orden {
+            cursor: pointer;
+        }
+
+        th.orden:hover {
+            background: #d4e8db;
+        }
+
+        td.num,
+        th.num {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        td.nombre {
+            white-space: nowrap;
+        }
+
+        td .sub,
+        th .sub {
+            display: block;
+            font-size: var(--t3);
+            font-weight: 400;
+            color: var(--gris);
+            white-space: normal;
+        }
+
+        tr.clic {
+            cursor: pointer;
+        }
+
+        tr.clic:hover td {
+            background: #f0f6f2;
+        }
+
+        tr.total td {
+            font-weight: 700;
+            background: #f1f5f2;
+            border-top: 2px solid var(--verde);
+            vertical-align: top;
+        }
+
+        tr.grupo td {
+            background: var(--sinpres-fondo);
+            color: var(--sinpres);
+            font-weight: 600;
+            font-size: var(--t3);
+        }
+
+        tr.subtotal td {
+            font-weight: 700;
+            background: #f7faf8;
+            border-top: 1px solid var(--linea);
+            border-bottom: 1px solid var(--linea);
+            vertical-align: top;
+        }
+
+        .bloque-sinpres {
+            margin-top: var(--e3);
+            border: 1px solid var(--linea);
+            border-left: 4px solid var(--sinpres);
+            border-radius: 8px;
+            background: var(--blanco);
+            overflow: hidden;
+        }
+
+        .bloque-sinpres-cab {
+            padding: var(--e2) var(--e3);
+            background: var(--sinpres-fondo);
+            border-bottom: 1px solid var(--linea);
+        }
+
+        .bloque-sinpres-tit {
+            font-size: var(--t2);
+            font-weight: 700;
+            color: var(--sinpres);
+            margin-bottom: 4px;
+        }
+
+        .bloque-sinpres-desc {
+            font-size: var(--t3);
+            color: var(--texto);
+            line-height: 1.5;
+        }
+
+        .bloque-sinpres .tabla-caja {
+            border: 0;
+            border-radius: 0;
+        }
+
+        tr.lineaceros td {
+            font-size: var(--t3);
+            color: var(--gris);
+            background: #fafbfa;
+        }
+
+        .minibarra {
+            height: 6px;
+            background: #edf1ee;
+            border-radius: 3px;
+            margin-top: 4px;
+            min-width: 48px;
+        }
+
+        .minibarra i {
+            display: block;
+            height: 100%;
+            border-radius: 3px;
+            background: repeating-linear-gradient(45deg, var(--sinpres), var(--sinpres) 4px, #6b79b3 4px, #6b79b3 8px);
+        }
+
+        .barra-fuera {
+            height: 12px;
+            background: #edf1ee;
+            border-radius: 6px;
+            min-width: 100px;
+            width: 100%;
+        }
+
+        .barra-fuera i {
+            display: block;
+            height: 100%;
+            border-radius: 6px;
+            background: var(--verde);
+        }
+
+        .barra-fuera.rojo i {
+            background: var(--rojo);
+        }
+
+        .barra-fuera.amarillo i {
+            background: var(--amarillo);
+        }
+
+        .barra-fuera.sinpres i {
+            background: repeating-linear-gradient(45deg, var(--sinpres), var(--sinpres) 4px, #6b79b3 4px, #6b79b3 8px);
+        }
+
+        .sub-codigo {
+            color: #8a948f;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Tabla "Qué atender primero": columnas estrechas + monto pegado a la barra */
+        .t-fuera th:nth-child(1),
+        .t-fuera td:nth-child(1) {
+            width: 1%;
+            white-space: nowrap;
+            padding-right: var(--e3);
+        }
+
+        .t-fuera th:nth-child(2),
+        .t-fuera td:nth-child(2) {
+            width: 1%;
+            white-space: nowrap;
+            padding-right: var(--e2);
+        }
+
+        .t-fuera th:nth-child(3),
+        .t-fuera td:nth-child(3) {
+            width: auto;
+            padding-right: var(--e1);
+        }
+
+        .t-fuera th:nth-child(4),
+        .t-fuera td:nth-child(4) {
+            width: 1%;
+            white-space: nowrap;
+            padding-left: 0;
+            text-align: left;
+        }
+
+        .t-fuera th:nth-child(5),
+        .t-fuera td:nth-child(5) {
+            width: 1%;
+            white-space: nowrap;
+        }
+
+        .t-fuera th:nth-child(4) {
+            text-align: left;
+        }
+
+        .filtro-tipo-th {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .filtro-tipo-th select {
+            background: var(--verde-claro);
+            color: var(--verde-oscuro);
+            border: 1px solid var(--verde);
+            border-radius: 4px;
+            padding: 2px 4px;
+            font: inherit;
+            font-size: var(--t3);
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .filtro-tipo-th select:hover {
+            background: #d4e8db;
+        }
+
+        .filtro-tipo-th.activo::after {
+            content: "●";
+            color: var(--verde);
+            font-size: 10px;
+        }
+
+        .solo-movil {
+            display: none;
+        }
+
+        .solo-movil-inline {
+            display: none;
+        }
+
+        /* ---- Estados (siempre con símbolo y texto) ---- */
+        .insignia {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: var(--t3);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .insignia.rojo {
+            background: var(--rojo-fondo);
+            color: var(--rojo);
+        }
+
+        .insignia.amarillo {
+            background: var(--amarillo-fondo);
+            color: var(--amarillo);
+        }
+
+        .insignia.verde {
+            background: var(--verde-claro);
+            color: var(--verde-oscuro);
+        }
+
+        .insignia.sinpres {
+            background: var(--sinpres-fondo);
+            color: var(--sinpres);
+        }
+
+        .insignia.neutro {
+            background: var(--neutro-fondo);
+            color: var(--neutro);
+        }
+
+        .alertas .insignia {
+            display: block;
+            width: fit-content;
+            margin: 2px 0;
+        }
+
+        /* ---- Filtros, plegables, preguntas ---- */
+        .filtros {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--e1);
+            align-items: center;
+            margin: var(--e1) 0 var(--e2);
+        }
+
+        .filtros button {
+            background: var(--blanco);
+            border: 1px solid var(--verde);
+            color: var(--verde-oscuro);
+            border-radius: 20px;
+            padding: 0 var(--e2);
+            min-height: 36px;
+            font: inherit;
+            font-size: var(--t3);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .filtros button.activo {
+            background: var(--verde);
+            color: #fff;
+        }
+
+        .filtros input {
+            border: 1px solid var(--linea);
+            border-radius: 6px;
+            padding: 0 12px;
+            min-height: 36px;
+            font: inherit;
+            font-size: var(--t3);
+            min-width: 220px;
+            flex: 1;
+            max-width: 320px;
+        }
+
+        details.plegable {
+            background: var(--blanco);
+            border: 1px solid var(--linea);
+            border-radius: 8px;
+            margin: var(--e2) 0;
+            border-left: 4px solid var(--linea);
+            overflow: hidden;
+        }
+
+        details.plegable>summary {
+            padding: 14px var(--e2);
+            cursor: pointer;
+            font-size: var(--t2);
+            font-weight: 700;
+            color: var(--verde-oscuro);
+        }
+
+        details.plegable>summary:hover {
+            background: #f0f6f2;
+        }
+
+        details.plegable[open]>summary {
+            border-bottom: 1px solid var(--linea);
+        }
+
+        details.plegable .tabla-caja {
+            border: 0;
+            border-radius: 0;
+        }
+
+        details.plegable .vacio {
+            border: 0;
+            border-radius: 0;
+            margin: 0;
+        }
+
+        /* Colores por tipo de sección en Avisos */
+        details.plegable#ancla-arriba {
+            border-left-color: var(--rojo);
+        }
+
+        details.plegable#ancla-arriba>summary {
+            background: linear-gradient(to right, var(--rojo-fondo) 0%, transparent 60%);
+            color: var(--rojo);
+        }
+
+        details.plegable[data-seccion="ancla-revisar"] {
+            border-left-color: var(--amarillo);
+        }
+
+        details.plegable[data-seccion="ancla-revisar"]>summary {
+            background: linear-gradient(to right, var(--amarillo-fondo) 0%, transparent 60%);
+            color: var(--amarillo);
+        }
+
+        details.plegable#ancla-sinpres {
+            border-left-color: var(--sinpres);
+        }
+
+        details.plegable#ancla-sinpres>summary {
+            background: linear-gradient(to right, var(--sinpres-fondo) 0%, transparent 60%);
+            color: var(--sinpres);
+        }
+
+        details.plegable#ancla-abajo {
+            border-left-color: var(--verde);
+        }
+
+        details.plegable#ancla-abajo>summary {
+            background: linear-gradient(to right, var(--verde-claro) 0%, transparent 60%);
+            color: var(--verde-oscuro);
+        }
+
+        details.plegable.bloque-sinpres-plegable {
+            border-left-color: var(--sinpres);
+            margin-top: var(--e3);
+        }
+
+        details.plegable.bloque-sinpres-plegable>summary {
+            background: linear-gradient(to right, var(--sinpres-fondo) 0%, transparent 60%);
+            color: var(--sinpres);
+        }
+
+        details.plegable.bloque-sinpres-plegable .bloque-sinpres-desc {
+            padding: var(--e2) var(--e3) 0;
+            font-size: var(--t3);
+            color: var(--texto);
+            line-height: 1.5;
+        }
+
+        .pregunta {
+            white-space: pre-line;
+            margin: 4px 0 2px;
+        }
+
+        .respuesta {
+            white-space: pre-line;
+            margin: 2px 0 8px;
+            color: var(--verde-oscuro);
+        }
+
+        .lectura {
+            margin-top: var(--e3);
+            font-size: var(--t3);
+            color: var(--gris);
+        }
+
+        .lectura ul {
+            margin: 4px 0 0;
+            padding-left: 20px;
+        }
+
+        /* ---- Estados de carga, vacío y error ---- */
+        .sk {
+            background: #e7ece8;
+            border-radius: 8px;
+        }
+
+        .sk-titulo {
+            height: 36px;
+            width: 70%;
+            margin-bottom: var(--e3);
+        }
+
+        .sk-kpis {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--e2);
+            margin-bottom: var(--e3);
+        }
+
+        .sk-kpis .sk {
+            height: 104px;
+        }
+
+        .sk-bloque {
+            height: 220px;
+        }
+
+        .vacio {
+            padding: var(--e3);
+            color: var(--gris);
+            background: var(--blanco);
+            border: 1px dashed var(--linea);
+            border-radius: 8px;
+        }
+
+        .error {
+            background: var(--rojo-fondo);
+            color: var(--rojo);
+            padding: var(--e3);
+            border-radius: 8px;
+        }
+
+        .error p {
+            margin: 8px 0 var(--e2);
+        }
+
+        .error button {
+            background: var(--rojo);
+            color: #fff;
+            border: 0;
+            border-radius: 6px;
+            padding: 0 var(--e2);
+            min-height: 40px;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .verMas {
+            background: var(--blanco);
+            border: 1px solid var(--verde);
+            color: var(--verde-oscuro);
+            border-radius: 20px;
+            padding: 0 var(--e3);
+            min-height: 36px;
+            font: inherit;
+            font-size: var(--t3);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .verMas:hover {
+            background: var(--verde-claro);
+        }
+
+        footer {
+            margin-top: var(--e4);
+            font-size: var(--t3);
+            color: var(--gris);
+        }
+
+        footer .ok {
+            color: var(--verde-oscuro);
+            font-weight: 600;
+        }
+
+        footer .mal {
+            color: var(--rojo);
+            font-weight: 700;
+        }
+
+        /* ---- Filtro de departamentos (header) ---- */
+        .acciones-header {
+            display: flex;
+            gap: var(--e1);
+            align-items: center;
+        }
+
+        .filtro-depto {
+            position: relative;
+        }
+
+        .filtro-depto .pastilla {
+            display: inline-block;
+            background: #fff;
+            color: var(--verde-oscuro);
+            font-size: var(--t3);
+            font-weight: 700;
+            border-radius: 10px;
+            padding: 2px 8px;
+            margin-left: 6px;
+        }
+
+        .filtro-depto .panel-deptos {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 6px);
+            background: var(--blanco);
+            color: var(--texto);
+            border: 1px solid var(--linea);
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, .12);
+            padding: var(--e2);
+            min-width: 280px;
+            max-height: 70vh;
+            overflow-y: auto;
+            z-index: 40;
+        }
+
+        .filtro-depto .panel-deptos.oculto {
+            display: none;
+        }
+
+        .filtro-depto .panel-acciones {
+            display: flex;
+            gap: var(--e1);
+            margin-bottom: var(--e1);
+            padding-bottom: var(--e1);
+            border-bottom: 1px solid var(--linea);
+        }
+
+        .filtro-depto .panel-acciones button {
+            background: var(--verde-claro);
+            color: var(--verde-oscuro);
+            border: 0;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font: inherit;
+            font-size: var(--t3);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .filtro-depto .panel-acciones button:hover {
+            background: #d4e8db;
+        }
+
+        .filtro-depto .panel-deptos label {
+            display: flex;
+            align-items: center;
+            gap: var(--e1);
+            padding: 6px 4px;
+            cursor: pointer;
+            font-size: var(--t2);
+            border-radius: 4px;
+        }
+
+        .filtro-depto .panel-deptos label:hover {
+            background: var(--fondo);
+        }
+
+        .filtro-depto .panel-deptos input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 640px) {
+            .filtro-depto .panel-deptos {
+                right: -16px;
+                left: auto;
+                min-width: 260px;
+            }
+        }
+
+        /* ---- Pantallas medianas y móvil ---- */
+        @media (max-width: 1100px) {
+            .kpis {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .kpis.n4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            header {
+                padding: 12px var(--e2);
+            }
+
+            nav {
+                padding: 0;
+            }
+
+            nav button {
+                flex: 1;
+                padding: 0 4px;
+            }
+
+            main {
+                padding: var(--e2) var(--e2) 40px;
+            }
+
+            .kpis,
+            .kpis.n3,
+            .kpis.n4,
+            .sk-kpis {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--e1);
+            }
+
+            .kpi {
+                padding: 12px;
+            }
+
+            .kpis .kpi:last-child:nth-child(odd) {
+                grid-column: 1 / -1;
+            }
+
+            td .insignia {
+                white-space: normal;
+            }
+
+            th,
+            th.num {
+                white-space: normal;
+            }
+
+            .p-fila {
+                grid-template-columns: 20px 1fr auto;
+                grid-template-areas: "op et val" "op sub pct" "op pista pista";
+                gap: 2px 8px;
+            }
+
+            .p-op {
+                font-size: 22px;
+                align-self: start;
+            }
+
+            .panel {
+                padding: 12px var(--e2);
+            }
+
+            .no-movil {
+                display: none !important;
+            }
+
+            .solo-movil {
+                display: block;
+                margin-top: 4px;
+            }
+
+            .solo-movil-inline {
+                display: inline;
+            }
+
+            td.nombre {
+                white-space: normal;
+                min-width: 120px;
+                max-width: 150px;
+            }
+
+            th,
+            td {
+                padding: 10px 6px;
+            }
+
+            .tabla-caja td:first-child,
+            .tabla-caja th:first-child {
+                position: sticky;
+                left: 0;
+                z-index: 1;
+                box-shadow: 1px 0 0 var(--linea);
+            }
+
+            .tabla-caja td:first-child {
+                background: var(--blanco);
+            }
+
+            .tabla-caja th:first-child {
+                background: var(--verde-claro);
+            }
+
+            tr.total td:first-child {
+                background: #f1f5f2;
+            }
+
+            tr.grupo td:first-child,
+            tr.lineaceros td:first-child {
+                position: static;
+                box-shadow: none;
+            }
+
+            .filtros input {
+                max-width: none;
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div>
+            <h1>Presupuesto Agrisem</h1>
+            <div class="ciclo" id="subtitulo"></div>
+        </div>
+        <div class="acciones-header">
+            <div class="filtro-depto">
+                <button type="button" data-accion="toggleFiltroDepto" id="btnFiltroDepto" aria-expanded="false"
+                    aria-controls="panelDeptos">Filtrar<span class="pastilla" id="pastillaFiltro"
+                        style="display:none"></span></button>
+                <div class="panel-deptos oculto" id="panelDeptos" role="group" aria-label="Seleccionar departamentos">
+                </div>
+            </div>
+            <button type="button" data-accion="actualizar">Actualizar</button>
+        </div>
+    </header>
+    <nav id="navegacion" aria-label="Vistas">
+        <button type="button" data-accion="vista" data-vista="resumen">Resumen</button>
+        <button type="button" data-accion="vista" data-vista="departamentos">Departamentos</button>
+        <button type="button" data-accion="vista" data-vista="avisos">Avisos</button>
+    </nav>
+    <main id="contenido"></main>
+
+    <script>
+        (function () {
+            'use strict';
+
+            // URL del endpoint JSON del Apps Script. Si cambias la implementación, actualiza aquí.
+            var API_URL = 'https://script.google.com/macros/s/AKfycbxIBjsQ4R6Rcxh3EXxXfIzioDoE10qhXxSd0f6TdKM67xlAd9cuenR9uwKA9VUcCZWq7g/exec?api=1';
+
+            var datos = null;
+            var estado = {vista: 'resumen', depto: null, cuenta: null, filtro: 'Todos', busqueda: '', orden: {}, filtroDeptos: null, panelAbierto: false, filtroImpacto: 'Todos', expandidas: {}, seccionesAbiertas: {}};
+
+            /* ---------- Filtro de departamentos (persistencia + utilidades) ---------- */
+            var CLAVE_FILTRO = 'agrisem.filtroDeptos';
+            function cargarFiltroGuardado() {
+                try {
+                    var raw = localStorage.getItem(CLAVE_FILTRO);
+                    if (!raw) return null;
+                    var arr = JSON.parse(raw);
+                    return Array.isArray(arr) ? arr : null;
+                } catch (e) {return null;}
+            }
+            function guardarFiltro(lista) {
+                try {localStorage.setItem(CLAVE_FILTRO, JSON.stringify(lista));} catch (e) { }
+            }
+            function inicializarFiltroDeptos(d) {
+                var todos = d.departamentos.map(function (x) {return x.nombre;});
+                var guardado = cargarFiltroGuardado();
+                if (guardado) {
+                    // Solo conserva los que siguen existiendo en los datos.
+                    var vivos = guardado.filter(function (n) {return todos.indexOf(n) >= 0;});
+                    estado.filtroDeptos = vivos.length ? vivos : todos.slice();
+                } else {
+                    estado.filtroDeptos = todos.slice();
+                }
+            }
+            function todosSeleccionados(d) {
+                return estado.filtroDeptos && estado.filtroDeptos.length === d.departamentos.length;
+            }
+            function deptosActivos() {
+                // Devuelve un objeto {nombre: true} para lookup O(1).
+                var set = {};
+                (estado.filtroDeptos || []).forEach(function (n) {set[n] = true;});
+                return set;
+            }
+
+            /* ---------- Formatos ---------- */
+            function esc(t) {
+                return String(t === null || t === undefined ? '' : t)
+                    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+            function numFmt(n, dec) {
+                return Math.abs(n).toLocaleString('es-MX', {minimumFractionDigits: dec, maximumFractionDigits: dec});
+            }
+            function m0(n) {return (n < 0 ? '-' : '') + '$' + numFmt(n, 0);}
+            function m2(n) {return (n < 0 ? '-' : '') + '$' + numFmt(n, 2);}
+            function mM(n) {return (n < 0 ? '-' : '') + '$' + numFmt(n / 1e6, 1) + ' M';}
+            function mM2(n) {return (n < 0 ? '-' : '') + '$' + numFmt(n / 1e6, 2) + ' M';}
+            function mSigno2(n) {return (n > 0 ? '+' : n < 0 ? '-' : '') + '$' + numFmt(n, 2);}
+            // Compacto con unidad visible para frases y subtítulos.
+            function mc(n) {
+                var a = Math.abs(n), s = n < 0 ? '-' : '';
+                if (a >= 1e6) return s + '$' + numFmt(a / 1e6, 2) + ' M';
+                if (a >= 1e3) return s + '$' + numFmt(a / 1e3, 0) + ' mil';
+                return s + '$' + numFmt(a, 0);
+            }
+            function tt(n) {return ' title="' + esc(m2(n)) + '"';}
+            function decPct(p) {return Math.abs(p * 100) >= 1000 ? 0 : 1;}
+            function pct(p) {return p === null || p === undefined ? 'n/d' : numFmt(p * 100, decPct(p)) + '%';}
+            function pctSigno(p) {
+                if (p === null || p === undefined) return 'n/d';
+                return (p > 0 ? '+' : p < 0 ? '-' : '') + numFmt(p * 100, decPct(p)) + '%';
+            }
+            function clave(depto, cuenta) {return depto + '|' + cuenta;}
+            function sumar(lista, f) {return lista.reduce(function (a, x) {return a + f(x);}, 0);}
+            function ordenar(lista, col, dir, tipo) {
+                var copia = lista.slice();
+                copia.sort(function (a, b) {
+                    var x = a[col], y = b[col];
+                    if (x === null || x === undefined) x = tipo === 'texto' ? '' : -Infinity;
+                    if (y === null || y === undefined) y = tipo === 'texto' ? '' : -Infinity;
+                    var r = tipo === 'texto' ? String(x).localeCompare(String(y), 'es') : (x === y ? 0 : (x > y ? 1 : -1));
+                    return r * dir;
+                });
+                return copia;
+            }
+            function flechaDe(dif) {return dif > 0 ? '▲' : dif < 0 ? '▼' : '=';}
+
+            /* ---------- Estados ---------- */
+            var ESTADOS = {
+                'Rojo': {txt: 'Explicar', clase: 'rojo', simbolo: '▲'},
+                'Amarillo': {txt: 'Revisar', clase: 'amarillo', simbolo: '◆'},
+                'Verde': {txt: 'Dentro del presupuesto', clase: 'verde', simbolo: '●'},
+                'Gasto sin presupuesto': {txt: 'Sin presupuesto', clase: 'sinpres', simbolo: '○'},
+                'Sin gasto real': {txt: 'Sin gasto real', clase: 'neutro', simbolo: '–'}
+            };
+            var SEVERIDAD = {'Rojo': 0, 'Amarillo': 1, 'Gasto sin presupuesto': 2, 'Verde': 3, 'Sin gasto real': 4};
+            function insignia(color) {
+                var e = ESTADOS[color] || {txt: color || 'Sin estado', clase: 'neutro', simbolo: '–'};
+                return '<span class="insignia ' + e.clase + '">' + e.simbolo + ' ' + esc(e.txt) + '</span>';
+            }
+            function insigniaDecision(dec) {
+                var clase = dec === 'Se corrige' ? 'amarillo' : dec === 'Se mantiene' ? 'verde' : dec === 'Pendiente' ? 'sinpres' : 'neutro';
+                return '<span class="insignia ' + clase + '">' + esc(dec || 'Sin decisión') + '</span>';
+            }
+
+            /* ---------- Títulos: pregunta de negocio + conclusión ---------- */
+            function titulo(pregunta, conclusion) {
+                return '<div class="kicker">' + esc(pregunta) + '</div><h2 class="titulo">' + esc(conclusion) + '</h2>';
+            }
+            function seccionTitulo(texto) {
+                return '<h3 class="sec suelto">' + esc(texto) + '</h3>';
+            }
+            function clic(accion, atributos) {
+                return ' class="clic" tabindex="0" role="link" data-accion="' + accion + '" ' + atributos;
+            }
+
+            /* ---------- Vista filtrada de los datos (recalcula totales sobre los deptos activos) ---------- */
+            function datosFiltrados(d) {
+                if (!estado.filtroDeptos || todosSeleccionados(d)) return d;
+                var set = deptosActivos();
+                var departamentos = d.departamentos.filter(function (x) {return set[x.nombre];});
+                var cuentas = d.cuentas.filter(function (c) {return set[c.departamento];});
+                var t = {presupuestoAnio: 0, presupuestadoFecha: 0, gastadoConPresupuesto: 0, gastoSinPresupuesto: 0, diferencia: 0, difPct: null, totalGastado: 0};
+                departamentos.forEach(function (x) {
+                    t.presupuestoAnio += x.presupuestoAnio;
+                    t.presupuestadoFecha += x.presupuestadoFecha;
+                    t.gastadoConPresupuesto += x.gastadoConPresupuesto;
+                    t.gastoSinPresupuesto += x.gastoSinPresupuesto;
+                });
+                t.diferencia = t.gastadoConPresupuesto - t.presupuestadoFecha;
+                t.difPct = t.presupuestadoFecha > 0 ? t.diferencia / t.presupuestadoFecha : null;
+                t.totalGastado = t.gastadoConPresupuesto + t.gastoSinPresupuesto;
+                // Clona el objeto y reemplaza lo filtrable; deja lo demás intacto (serieMensual, picos, cuadre, detalle, etc.).
+                var copia = {};
+                for (var k in d) if (Object.prototype.hasOwnProperty.call(d, k)) copia[k] = d[k];
+                copia.departamentos = departamentos;
+                copia.cuentas = cuentas;
+                copia.totales = t;
+                return copia;
+            }
+
+            /* ---------- Cálculos de presentación (sobre los datos ya validados) ---------- */
+            // Cuentas con presupuesto: cuánto van arriba (excedente bruto) y cuánto abajo.
+            function resumenCuentas(d) {
+                var r = {pos: 0, neg: 0, nPos: 0, nNeg: 0, nSin: 0};
+                d.cuentas.forEach(function (c) {
+                    if (c.color === 'Gasto sin presupuesto') {r.nSin++; return;}
+                    if (c.diferencia > 0) {r.pos += c.diferencia; r.nPos++;}
+                    else if (c.diferencia < 0) {r.neg += c.diferencia; r.nNeg++;}
+                });
+                return r;
+            }
+            // Fuera de plan: todo el gasto de cuentas sin presupuesto + lo que cada cuenta con presupuesto va arriba.
+            function fueraDePlan(d) {
+                var lista = [];
+                d.cuentas.forEach(function (c) {
+                    if (c.color === 'Gasto sin presupuesto') lista.push({c: c, sin: true, monto: c.gastado});
+                    else if (c.diferencia > 0) lista.push({c: c, sin: false, monto: c.diferencia});
+                });
+                lista.sort(function (a, b) {return b.monto - a.monto;});
+                return {lista: lista, total: sumar(lista, function (x) {return x.monto;})};
+            }
+            /* ---------- Carga, vacío y error ---------- */
+            function esqueleto() {
+                return '<div role="status" aria-busy="true"><div class="kicker">Cargando…</div><div class="sk sk-titulo"></div>' +
+                    '<div class="sk-kpis"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>' +
+                    '<div class="sk sk-bloque"></div></div>';
+            }
+            function cargar() {
+                document.getElementById('contenido').innerHTML = esqueleto();
+                fetch(API_URL, {method: 'GET'})
+                    .then(function (r) {
+                        if (!r.ok) throw new Error('HTTP ' + r.status);
+                        return r.json();
+                    })
+                    .then(function (resp) {
+                        if (!resp.ok) throw new Error(resp.error || 'Respuesta sin datos');
+                        var d = resp.datos;
+                        datos = d;
+                        inicializarFiltroDeptos(d);
+                        renderizarPanelDeptos();
+                        actualizarPastilla();
+                        pintar();
+                    })
+                    .catch(function (e) {
+                        document.getElementById('contenido').innerHTML =
+                            '<div class="error" role="alert"><strong>No se pudo leer los datos</strong><p>' + esc(e && e.message ? e.message : e) + '</p>' +
+                            '<button type="button" data-accion="actualizar">Reintentar</button></div>';
+                    });
+            }
+
+            function pintar(sinScroll) {
+                var d = datos;
+                document.getElementById('subtitulo').textContent = subtituloHeader(d);
+                var activa = estado.vista === 'departamento' || estado.vista === 'cuenta' ? 'departamentos' : estado.vista;
+                var botones = document.querySelectorAll('#navegacion button');
+                for (var i = 0; i < botones.length; i++) {
+                    var es = botones[i].getAttribute('data-vista') === activa;
+                    botones[i].className = es ? 'activa' : '';
+                    if (es) botones[i].setAttribute('aria-current', 'page'); else botones[i].removeAttribute('aria-current');
+                }
+                var html = '';
+                if (estado.vista === 'resumen') html = vistaResumen(datosFiltrados(d));
+                else if (estado.vista === 'departamentos') html = vistaDepartamentos(d);
+                else if (estado.vista === 'departamento') html = vistaDepartamento(d);
+                else if (estado.vista === 'cuenta') html = vistaCuenta(d);
+                else if (estado.vista === 'avisos') html = vistaAvisos(datosFiltrados(d));
+                document.getElementById('contenido').innerHTML = html + pie(d);
+                if (estado.vista === 'departamento') pintarTablaCuentas();
+                if (!sinScroll) window.scrollTo(0, 0);
+            }
+
+            function subtituloHeader(d) {
+                var base = 'Ciclo ' + d.ciclo;
+                if (!d.mesCorte || d.mesCorte === 0) return base + ' · Sin gastos cargados';
+                // Deriva el año desde el ciclo. MESES_CICLO: mes 1 = agosto, mes 12 = julio.
+                // Meses 1-5 (ago-dic) están en el primer año del ciclo; meses 6-12 (ene-jul) en el segundo.
+                var partes = String(d.ciclo).split('-');
+                var anioInicio = 2000 + parseInt(partes[0], 10);
+                var anio = d.mesCorte <= 5 ? anioInicio : anioInicio + 1;
+                return base + ' · Gastos a ' + d.nombreMes.toLowerCase() + ' ' + anio;
+            }
+
+            function pie(d) {
+                var c = d.cuadre, l = [];
+                if (c.ok) l.push('<span class="ok" title="Diferencia máxima permitida: ' + esc(m2(c.tolerancia)) + '">✓ Cifras verificadas contra Gasto real y Presupuesto</span>');
+                else l.push('<span class="mal">✕ NO CUADRA. Gasto: ' + mSigno2(c.difGasto) + ' · Presupuestado a la fecha: ' + mSigno2(c.difPresupuestadoFecha) + ' · Presupuesto del año: ' + mSigno2(c.difPresupuestoAnio) + '. Revisar antes de presentar.</span>');
+                if (c.importeSinDepartamento !== 0) l.push('Hay ' + m2(c.importeSinDepartamento) + ' de gasto real sin departamento que no entra en Comparación.');
+                if (c.filasMesInvalido > 0) l.push('Hay ' + c.filasMesInvalido + ' filas de Gasto real con mes fuera de 1 a 12.');
+                if (c.clavesFueraDeComparacion > 0) l.push('Hay ' + c.clavesFueraDeComparacion + ' filas de Gasto real con una cuenta que no aparece en Comparación.');
+                return '<footer>' + l.join('<br>') + '</footer>';
+            }
+
+            /* ---------- KPI ---------- */
+            function kpisResumen(d) {
+                var t = d.totales;
+                var mes = d.nombreMes ? d.nombreMes.toLowerCase() : 'la fecha';
+                // Excedente = gasto total real - presupuesto acumulado. Es "cuánto nos pasamos".
+                var excTotal = t.totalGastado - t.presupuestadoFecha;
+                var excPct = t.presupuestadoFecha > 0 ? excTotal / t.presupuestadoFecha : null;
+                var porcSin = t.totalGastado > 0 ? t.gastoSinPresupuesto / t.totalGastado : null;
+                var claseHero = excTotal > 0 ? '' : 'ok';
+                // Cifra dominante.
+                var cifraSigno = excTotal > 0 ? '+' : excTotal < 0 ? '−' : '';
+                var cifra = cifraSigno + mM2(Math.abs(excTotal)).replace('-', '');
+                // Narrativa: una frase corta que explica la cifra.
+                var narrativa;
+                if (excTotal > 0) {
+                    narrativa = 'Estamos gastando ' + mc(Math.abs(excTotal)) + ' más de lo planeado a ' + mes +
+                        (excPct !== null ? ' (' + pct(excPct) + ' arriba del presupuesto).' : '.');
+                } else if (excTotal < 0) {
+                    narrativa = 'Estamos gastando ' + mc(Math.abs(excTotal)) + ' menos de lo planeado a ' + mes +
+                        (excPct !== null ? ' (' + pct(Math.abs(excPct)) + ' debajo del presupuesto).' : '.');
+                } else {
+                    narrativa = 'El gasto a ' + mes + ' está en línea con el presupuesto.';
+                }
+                // Etiqueta cambia según el signo: sobregasto (rojo), ahorro (verde) o en línea (neutro).
+                var etiqueta;
+                if (excTotal > 0) etiqueta = 'Sobregasto acumulado a ' + mes;
+                else if (excTotal < 0) etiqueta = 'Ahorro acumulado a ' + mes;
+                else etiqueta = 'Dentro del presupuesto a ' + mes;
+                var h = '<div class="hero ' + claseHero + '">' +
+                    '<div class="et">' + esc(etiqueta) + '</div>' +
+                    '<div class="cifra">' + esc(cifra) + '</div>' +
+                    '<div class="narr">' + esc(narrativa) + '</div>' +
+                    '<div class="desc">' +
+                    '<span>Gasto acumulado a ' + esc(mes) + '<strong>' + mM(t.totalGastado) + '</strong></span>' +
+                    '<span>Presupuesto acumulado a ' + esc(mes) + '<strong>' + mM(t.presupuestadoFecha) + '</strong></span>' +
+                    '<span>Con presupuesto<strong>' + mM(t.gastadoConPresupuesto) + '</strong></span>' +
+                    '<span>Sin presupuesto<strong>' + mM(t.gastoSinPresupuesto) + (porcSin !== null ? ' · ' + pct(porcSin) : '') + '</strong></span>' +
+                    '<span>Presupuesto total del año<strong>' + mM(t.presupuestoAnio) + '</strong></span>' +
+                    '</div>' +
+                    '</div>';
+                return h;
+            }
+
+            /* ---------- Puente: del presupuesto al gasto real ---------- */
+            function puente(d) {
+                var t = d.totales, r = resumenCuentas(d);
+                var base = t.presupuestadoFecha;
+                var filas = [
+                    {op: '', et: 'Presupuestado a ' + (d.nombreMes ? d.nombreMes.toLowerCase() : 'la fecha'), sub: '', v: base, pct: null, fill: 'background:#8aa395'},
+                    {op: '+', et: 'Cuentas arriba del presupuesto', sub: r.nPos + ' cuentas', v: r.pos, pct: base > 0 ? r.pos / base : null, fill: 'background:#9F1D16', ancla: 'arriba'},
+                    {op: '−', et: 'Cuentas abajo del presupuesto', sub: r.nNeg + ' cuentas', v: r.neg, pct: base > 0 ? r.neg / base : null, fill: 'background:#5FA77A', ancla: 'abajo'},
+                    {op: '=', et: 'Gastado con presupuesto', sub: '', v: t.gastadoConPresupuesto, pct: t.difPct, subtotal: true, fill: 'background:#1B6B3A'},
+                    {sep: 'Sin presupuesto y total'},
+                    {op: '+', et: 'Gasto sin presupuesto', sub: r.nSin + ' cuentas', v: t.gastoSinPresupuesto, pct: base > 0 ? t.gastoSinPresupuesto / base : null, clase: 'rayas', ancla: 'sinpres'},
+                    {op: '=', et: 'Total gastado en SAP', sub: '', v: t.totalGastado, pct: base > 0 ? (t.totalGastado - base) / base : null, subtotal: true, fill: 'background:#124A28'}
+                ];
+                // Escala de las barras: niveles acumulados para las de flujo, absolutas para subtotales.
+                var nivel = 0, max = 1;
+                filas.forEach(function (p) {
+                    if (p.sep) return;
+                    if (p.op === '=' || p.op === '') {p.a = 0; p.b = p.v; nivel = p.v;}
+                    else {p.a = nivel; p.b = nivel + p.v; nivel = p.b;}
+                    max = Math.max(max, p.a, p.b, base);
+                });
+                var marcaPct = (base / max * 100).toFixed(2);
+                var h = '<div class="panel">';
+                filas.forEach(function (p) {
+                    if (p.sep) {h += '<div class="p-sep">' + esc(p.sep) + '</div>'; return;}
+                    var lo = Math.min(p.a, p.b), anchoPct = Math.abs(p.b - p.a) / max * 100;
+                    var valor = (p.op === '+' && p.v > 0 ? '+' : p.op === '−' ? '−' : '') + mM2(Math.abs(p.v));
+                    var pctTxt = p.pct === null || p.pct === undefined ? '' : pctSigno(p.pct) + ' vs presup.';
+                    // La línea del presupuesto solo en las filas que lo pueden rebasar (no en la base ni en el presupuesto mismo).
+                    var marca = (p.op === '=' && base < max) ? '<div class="p-marca" style="left:' + marcaPct + '%"></div>' : '';
+                    var clicAttrs = p.ancla ? ' class="p-fila' + (p.subtotal ? ' subtotal' : '') + ' clicable" tabindex="0" role="link" data-accion="irAvisos" data-ancla="' + esc(p.ancla) + '"' : ' class="p-fila' + (p.subtotal ? ' subtotal' : '') + '"';
+                    h += '<div' + clicAttrs + tt(p.v) + '>' +
+                        '<div class="p-op">' + esc(p.op) + '</div>' +
+                        '<div class="p-et">' + esc(p.et) + '</div>' +
+                        '<div class="p-sub">' + esc(p.sub) + '</div>' +
+                        '<div class="p-pista"><div class="p-barra ' + (p.clase || '') + '" style="left:' + (lo / max * 100).toFixed(2) + '%;width:' + anchoPct.toFixed(2) + '%;' + (p.fill || '') + '"></div>' + marca + '</div>' +
+                        '<div class="p-val">' + valor + '</div>' +
+                        '<div class="p-pct">' + esc(pctTxt) + '</div></div>';
+                });
+                var residuo = base + r.pos + r.neg - t.gastadoConPresupuesto;
+                h += '<div class="nota">Los porcentajes se miden contra lo presupuestado a la fecha. La línea marca ese presupuesto en cada subtotal.</div>';
+                if (Math.abs(residuo) > 1) h += '<div class="nota arriba">El puente no cuadra por ' + m2(residuo) + '. Revisar Comparación.</div>';
+                return h + '</div>';
+            }
+
+            /* ---------- Qué atender primero (tabla de acción del Resumen) ---------- */
+            function tablaFuera(listaVisible, totalGeneral, listaCompleta) {
+                // listaVisible: las filas que se van a renderizar (ya filtradas por loQuePesa).
+                // totalGeneral: el total de fuera de plan de todas las cuentas (para % acum.).
+                // listaCompleta: la lista original sin filtro (para calcular acum. sobre el orden original).
+                function tipoDe(x) {
+                    if (x.sin) return 'Sin presupuesto';
+                    if (x.c.color === 'Rojo') return 'Explicar';
+                    return 'Arriba del presupuesto';
+                }
+                var filtroActivo = estado.filtroImpacto && estado.filtroImpacto !== 'Todos';
+                var maxMonto = Math.max.apply(null, [1].concat(listaVisible.map(function (x) {return x.monto;})));
+                // Encabezado "Tipo" con dropdown.
+                var opciones = ['Todos', 'Explicar', 'Sin presupuesto', 'Arriba del presupuesto'];
+                var thTipo = '<th class="no-movil"><span class="filtro-tipo-th' + (filtroActivo ? ' activo' : '') + '">Tipo <select data-accion="filtroImpacto" aria-label="Filtrar por tipo">';
+                opciones.forEach(function (op) {
+                    thTipo += '<option value="' + esc(op) + '"' + (estado.filtroImpacto === op ? ' selected' : '') + '>' + esc(op) + '</option>';
+                });
+                thTipo += '</select></span></th>';
+                var h = '<div class="tabla-caja"><table class="t-fuera"><thead><tr>' +
+                    '<th>Cuenta</th>' + thTipo + '<th class="no-movil"></th><th class="num">Impacto</th><th class="num no-movil">% del impacto</th></tr></thead><tbody>';
+                listaVisible.forEach(function (x) {
+                    var c = x.c;
+                    var tipo = x.sin ? '<span class="insignia sinpres">○ Sin presupuesto</span>'
+                        : '<span class="insignia ' + (c.color === 'Rojo' ? 'rojo' : c.color === 'Amarillo' ? 'amarillo' : 'neutro') + '">▲ ' + (c.color === 'Rojo' || c.color === 'Amarillo' ? esc(ESTADOS[c.color].txt) : 'Arriba del presupuesto') + '</span>';
+                    var anchoBarra = Math.max(2, (x.monto / maxMonto) * 100).toFixed(1);
+                    // Color de la barra según el tipo de la fila.
+                    var claseBarra = x.sin ? 'sinpres' : (c.color === 'Rojo' ? 'rojo' : c.color === 'Amarillo' ? 'amarillo' : '');
+                    var barra = '<div class="barra-fuera ' + claseBarra + '"><i style="width:' + anchoBarra + '%"></i></div>';
+                    h += '<tr' + clic('cuenta', 'data-depto="' + encodeURIComponent(c.departamento) + '" data-cuenta="' + esc(c.cuenta) + '"') + '>' +
+                        '<td class="nombre"><strong>' + esc(c.nombre) + '</strong><span class="sub">' + esc(c.departamento) + '</span><span class="sub sub-codigo">' + esc(c.cuenta) + '</span><span class="solo-movil">' + tipo + '</span></td>' +
+                        '<td class="no-movil">' + tipo + '</td>' +
+                        '<td class="no-movil">' + barra + '</td>' +
+                        '<td class="num"><strong>' + m0(x.monto) + '</strong></td>' +
+                        '<td class="num no-movil">' + pct(totalGeneral > 0 ? x.monto / totalGeneral : null) + '</td></tr>';
+                });
+                if (!listaVisible.length) {
+                    h += '<tr><td colspan="5" style="padding:var(--e3);color:var(--gris);text-align:center">No hay cuentas con ese filtro.</td></tr>';
+                }
+                return h + '</tbody></table></div>';
+            }
+
+            function loQuePesa(d) {
+                var f = fueraDePlan(d);
+                if (!f.lista.length) return seccionTitulo('Qué atender primero') + '<div class="vacio">Todo el gasto está dentro de lo presupuestado.</div>';
+                // Clasifica tipo (misma función que tablaFuera; duplicada para claridad).
+                function tipoDe(x) {
+                    if (x.sin) return 'Sin presupuesto';
+                    if (x.c.color === 'Rojo') return 'Explicar';
+                    return 'Arriba del presupuesto';
+                }
+                var filtroActivo = estado.filtroImpacto && estado.filtroImpacto !== 'Todos';
+                var listaConFiltro = filtroActivo ? f.lista.filter(function (x) {return tipoDe(x) === estado.filtroImpacto;}) : f.lista;
+                var totalConFiltro = filtroActivo ? sumar(listaConFiltro, function (x) {return x.monto;}) : f.total;
+                var n = Math.min(10, listaConFiltro.length);
+                var top10Filtrado = listaConFiltro.slice(0, n);
+                var resto = listaConFiltro.length - n;
+                var sumaTop = sumar(top10Filtrado, function (x) {return x.monto;});
+                var h = seccionTitulo('Qué atender primero');
+                // tablaFuera recibe f.lista COMPLETA (sin filtrar) y f.total GENERAL
+                // para que el % acum. se calcule sobre el total general.
+                // El filtro se aplica DENTRO de tablaFuera para decidir qué filas mostrar.
+                // Como solo queremos top 10 del filtro, enviamos las top 10 del subconjunto filtrado,
+                // pero le decimos a tablaFuera que no vuelva a filtrar (porque ya está filtrado).
+                h += tablaFuera(top10Filtrado, f.total, f.lista);
+                if (resto) {
+                    var etiqueta = filtroActivo ? 'Otras ' + resto + ' cuentas de este tipo' : 'Otras ' + resto + ' cuentas';
+                    h += '<div class="nota">' + etiqueta + ' suman ' + m0(totalConFiltro - sumaTop) + ' (' + pct(totalConFiltro > 0 ? (totalConFiltro - sumaTop) / totalConFiltro : null) + '): <a class="enlace" tabindex="0" data-accion="vista" data-vista="departamentos">verlas por departamento</a>.</div>';
+                }
+                return h;
+            }
+
+            function contextoSinPresupuesto(d) {
+                var t = d.totales;
+                if (t.gastoSinPresupuesto <= 0) return '';
+                // Toma el top 3 de cuentas sin presupuesto.
+                var lista = d.cuentas.filter(function (c) {return c.color === 'Gasto sin presupuesto';});
+                if (!lista.length) return '';
+                lista = lista.slice().sort(function (a, b) {return b.gastado - a.gastado;}).slice(0, 3);
+                var sumaTop = sumar(lista, function (c) {return c.gastado;});
+                var pctTop = t.gastoSinPresupuesto > 0 ? sumaTop / t.gastoSinPresupuesto : null;
+                var h = '<div class="contexto-sinpres">' +
+                    '<div class="cab">' +
+                    '<span class="tit">Gasto sin presupuesto · ' + mM(t.gastoSinPresupuesto) + '</span>' +
+                    '<span class="res">Top 3 cuentas que lo componen</span>' +
+                    '</div><ol>';
+                lista.forEach(function (c) {
+                    var pctC = t.gastoSinPresupuesto > 0 ? c.gastado / t.gastoSinPresupuesto : null;
+                    h += '<li tabindex="0" role="link" data-accion="cuenta" data-depto="' + encodeURIComponent(c.departamento) + '" data-cuenta="' + esc(c.cuenta) + '">' +
+                        '<span class="n-cuenta">' + esc(c.nombre) + '</span>' +
+                        '<span class="n-monto">' + m0(c.gastado) + '</span>' +
+                        '<span class="n-pct">' + pct(pctC) + '</span>' +
+                        '<span class="n-sub">' + esc(c.departamento) + '</span>' +
+                        '</li>';
+                });
+                h += '</ol>';
+                if (pctTop !== null) {
+                    h += '<div class="pie">Estas 3 cuentas son el <strong>' + pct(pctTop) + '</strong> del gasto sin presupuesto. <a class="enlace" tabindex="0" data-accion="irAvisos" data-ancla="sinpres">Ver todas las cuentas sin presupuesto</a>.</div>';
+                }
+                return h + '</div>';
+            }
+
+            function vistaResumen(d) {
+                if (d.mesCorte === 0) {
+                    return titulo('¿Dónde nos estamos desviando?', 'Todavía no hay gasto real cargado para el ciclo ' + d.ciclo) +
+                        '<div class="vacio">Presupuesto vigente del año: ' + m2(d.totales.presupuestoAnio) + '. Cuando se cargue el primer mes de SAP, aquí verás la comparación contra lo presupuestado.</div>';
+                }
+                return kpisResumen(d) + puente(d) + loQuePesa(d);
+            }
+
+            /* ---------- Departamentos ---------- */
+            var RAYA = '<span class="sub" style="display:inline">—</span>';
+            var COLS_DEPTO = [
+                {k: 'nombre', t: 'Departamento', tipo: 'texto'},
+                {k: 'totalGastado', t: 'Total gastado', num: true},
+                {k: 'diferencia', t: 'Vs. plan', num: true},
+                {k: 'rojos', t: 'Alertas', tipo: 'num', movil: false}
+            ];
+            function celdaAlertas(x) {
+                if (x.presupuestoAnio === 0 || !x.cuentas) return RAYA;
+                if (!x.rojos && !x.amarillos) return '<span class="sub" style="display:inline">Sin alertas</span>';
+                var p = '';
+                if (x.rojos) p += '<span class="insignia rojo">▲ ' + x.rojos + ' por explicar</span>';
+                if (x.amarillos) p += '<span class="insignia amarillo">◆ ' + x.amarillos + ' por revisar</span>';
+                return '<div class="alertas">' + p + '</div>';
+            }
+            function celdaDifDepto(dif, p) {
+                var clase = dif > 0 ? 'arriba' : dif < 0 ? 'abajo' : '';
+                var signo = dif > 0 ? '+' : dif < 0 ? '-' : '';
+                return '<span class="' + clase + '">' + flechaDe(dif) + ' ' + pctSigno(p) + '</span>' +
+                    '<span class="sub"><span class="no-movil">' + signo + '$' + numFmt(Math.abs(dif), 0) + '</span>' +
+                    '<span class="solo-movil-inline">' + signo + mc(Math.abs(dif)).replace('$', '$') + '</span></span>';
+            }
+            function celdaSinPresDepto(monto) {
+                if (!monto) return RAYA;
+                return '<span class="no-movil">' + m0(monto) + '</span><span class="solo-movil-inline">' + mc(monto) + '</span>';
+            }
+            function filaDepto(x) {
+                var sp = x.presupuestoAnio === 0;
+                // Subtexto bajo el total: desglose con/sin presupuesto cuando aplique.
+                var subTotal = '';
+                if (sp) {
+                    subTotal = '<span class="sub">Todo sin presupuesto</span>';
+                } else if (x.gastoSinPresupuesto > 0) {
+                    subTotal = '<span class="sub">' + mc(x.gastoSinPresupuesto) + ' sin presupuesto</span>';
+                }
+                return '<tr' + clic('depto', 'data-depto="' + encodeURIComponent(x.nombre) + '"') + '>' +
+                    '<td class="nombre"><strong>' + esc(x.nombre) + '</strong><span class="sub">' + esc(x.estado || 'Sin dato') + '</span><span class="solo-movil">' + celdaAlertas(x) + '</span></td>' +
+                    '<td class="num"><strong>' + m0(x.totalGastado) + '</strong>' + subTotal + '</td>' +
+                    '<td class="num">' + (sp ? RAYA : celdaDifDepto(x.diferencia, x.difPct)) + '</td>' +
+                    '<td class="no-movil">' + celdaAlertas(x) + '</td></tr>';
+            }
+            function tablaDepartamentos(d) {
+                var o = estado.orden.depto || {col: 'totalGastado', dir: -1, tipo: 'num'};
+                var con = [], sin = [], ceros = [];
+                d.departamentos.forEach(function (x) {
+                    if (x.presupuestoAnio > 0) con.push(x);
+                    else if (x.totalGastado !== 0) sin.push(x);
+                    else ceros.push(x);
+                });
+                con = ordenar(con, o.col, o.dir, o.tipo);
+                sin = ordenar(sin, o.col, o.dir, o.tipo);
+                var h = '<div class="tabla-caja"><table><thead><tr>';
+                COLS_DEPTO.forEach(function (c) {
+                    var flecha = o.col === c.k ? (o.dir < 0 ? ' ▼' : ' ▲') : '';
+                    h += '<th tabindex="0" class="orden' + (c.num ? ' num' : '') + (c.movil === false ? ' no-movil' : '') + '" data-accion="ordenar" data-tabla="depto" data-col="' + c.k + '" data-tipo="' + (c.tipo === 'texto' ? 'texto' : 'num') + '">' + esc(c.t) + flecha + '</th>';
+                });
+                h += '</tr></thead><tbody>';
+                con.forEach(function (x) {h += filaDepto(x);});
+                // Subtotal de áreas CON presupuesto (antes del total empresa).
+                var tCon = {totalGastado: 0, presupuestadoFecha: 0, gastadoConPresupuesto: 0, gastoSinPresupuesto: 0};
+                con.forEach(function (x) {
+                    tCon.totalGastado += x.totalGastado;
+                    tCon.presupuestadoFecha += x.presupuestadoFecha;
+                    tCon.gastadoConPresupuesto += x.gastadoConPresupuesto;
+                    tCon.gastoSinPresupuesto += x.gastoSinPresupuesto;
+                });
+                var tConDif = tCon.gastadoConPresupuesto - tCon.presupuestadoFecha;
+                var tConPct = tCon.presupuestadoFecha > 0 ? tConDif / tCon.presupuestadoFecha : null;
+                if (con.length) {
+                    h += '<tr class="subtotal"><td>Subtotal con presupuesto (' + con.length + ')</td>' +
+                        '<td class="num"><strong>' + m0(tCon.totalGastado) + '</strong></td>' +
+                        '<td class="num">' + celdaDifDepto(tConDif, tConPct) + '</td>' +
+                        '<td class="no-movil"></td></tr>';
+                }
+                if (ceros.length) {
+                    h += '<tr class="lineaceros"><td colspan="4">Sin gasto real cargado: ' + ceros.map(function (x) {return '<strong>' + esc(x.nombre) + '</strong>';}).join(', ') + '.</td></tr>';
+                }
+                var t = d.totales;
+                h += '<tr class="total"><td>Total empresa</td>' +
+                    '<td class="num"><strong>' + m0(t.totalGastado) + '</strong><span class="sub">' + mc(t.gastadoConPresupuesto) + ' con + ' + mc(t.gastoSinPresupuesto) + ' sin</span></td>' +
+                    '<td class="num">' + celdaDifDepto(t.diferencia, t.difPct) + '</td>' +
+                    '<td class="no-movil"></td></tr>';
+                h += '</tbody></table></div>';
+                // Bloque separado para áreas SIN presupuesto.
+                if (sin.length) {
+                    var tSin = sumar(sin, function (x) {return x.totalGastado;});
+                    var pctSin = t.totalGastado > 0 ? tSin / t.totalGastado : null;
+                    var abiertoSin = estado.seccionesAbiertas['bloque-sinpres'] ? ' open' : '';
+                    h += '<details class="plegable bloque-sinpres-plegable" data-seccion="bloque-sinpres"' + abiertoSin + '>' +
+                        '<summary>Áreas sin presupuesto (' + sin.length + ') · ' + m0(tSin) + (pctSin !== null ? ' · ' + pct(pctSin) + ' del gasto total' : '') + '</summary>' +
+                        '<div class="bloque-sinpres-desc">Estas áreas no tienen presupuesto en el ciclo. Todo su gasto cae en "sin presupuesto".</div>' +
+                        '<div class="tabla-caja"><table><thead><tr>' +
+                        '<th>Departamento</th><th class="num">Gasto a la fecha</th><th class="no-movil">Situación</th>' +
+                        '</tr></thead><tbody>';
+                    sin.forEach(function (x) {
+                        h += '<tr' + clic('depto', 'data-depto="' + encodeURIComponent(x.nombre) + '"') + '>' +
+                            '<td class="nombre"><strong>' + esc(x.nombre) + '</strong></td>' +
+                            '<td class="num"><strong>' + m0(x.totalGastado) + '</strong></td>' +
+                            '<td class="no-movil"><span class="sub" style="display:inline">' + esc(x.estado || 'Sin dato') + '</span></td></tr>';
+                    });
+                    h += '<tr class="subtotal"><td>Subtotal sin presupuesto</td>' +
+                        '<td class="num"><strong>' + m0(tSin) + '</strong></td>' +
+                        '<td class="no-movil"></td></tr>';
+                    h += '</tbody></table></div></details>';
+                }
+                return h;
+            }
+            function vistaDepartamentos(d) {
+                return '<h2 class="titulo">¿Qué área se desvía más?</h2>' +
+                    tablaDepartamentos(d);
+            }
+
+            /* ---------- Departamento → cuentas ---------- */
+            function vistaDepartamento(d) {
+                var x = d.departamentos.filter(function (y) {return y.nombre === estado.depto;})[0];
+                if (!x) return '<div class="error">No encuentro el departamento.</div>';
+                var sp = x.presupuestoAnio === 0;
+                var totalDepto = x.totalGastado;
+                var h = '<div class="miga"><a tabindex="0" data-accion="vista" data-vista="departamentos">‹ Departamentos</a> › <strong>' + esc(x.nombre) + '</strong></div>';
+                h += '<h2 class="titulo">¿Qué cuentas se desvían?</h2>';
+                h += '<div class="kpis n4">' +
+                    '<div class="kpi"><div class="et">Presupuestado a la fecha</div><div class="val">' + (sp ? '—' : mc(x.presupuestadoFecha)) + '</div><div class="sub">' + (sp ? 'Sin presupuesto del año' : 'Presupuesto del año: ' + mc(x.presupuestoAnio)) + '</div></div>' +
+                    '<div class="kpi con"><div class="et">Gastado con presupuesto</div><div class="val">' + (sp ? '—' : mc(x.gastadoConPresupuesto)) + '</div><div class="sub ' + (x.diferencia > 0 ? 'arriba' : x.diferencia < 0 ? 'abajo' : '') + '">' + (sp ? 'Sin presupuesto para comparar' : flechaDe(x.diferencia) + ' ' + pctSigno(x.difPct) + ' · ' + mc(Math.abs(x.diferencia))) + '</div></div>' +
+                    '<div class="kpi sin"><div class="et">Gasto sin presupuesto</div><div class="val">' + mc(x.gastoSinPresupuesto) + '</div><div class="sub">' + (totalDepto > 0 ? pct(x.gastoSinPresupuesto / totalDepto) + ' del gasto del área' : 'Sin gasto real cargado') + '</div></div>' +
+                    '<div class="kpi exp"><div class="et">▲ Por explicar</div><div class="val">' + (sp ? '—' : x.rojos) + '</div><div class="sub">' + (sp ? 'Sin presupuesto: sin alertas' : '◆ ' + x.amarillos + ' por revisar') + '</div></div>' +
+                    '</div>';
+                var meta = [];
+                meta.push('Situación del presupuesto: <strong>' + esc(x.estado || 'Sin dato') + '</strong>');
+                if (x.responsable) meta.push('Responsable: ' + esc(x.responsable));
+                if (x.notas) meta.push('Nota: ' + esc(x.notas));
+                h += '<div class="nota">' + meta.join(' · ') + '</div>';
+                h += '<div class="kicker">Cuentas contables</div>';
+                var filtros = ['Todos', 'Rojo', 'Amarillo', 'Verde', 'Gasto sin presupuesto'];
+                h += '<div class="filtros">';
+                filtros.forEach(function (f) {
+                    var etiqueta = f === 'Todos' ? 'Todas' : (ESTADOS[f] ? ESTADOS[f].txt : f);
+                    h += '<button type="button" data-accion="filtro" data-color="' + esc(f) + '" class="' + (estado.filtro === f ? 'activo' : '') + '">' + esc(etiqueta) + '</button>';
+                });
+                h += '<input type="search" id="buscador" placeholder="Buscar cuenta" value="' + esc(estado.busqueda) + '" aria-label="Buscar cuenta"></div><div id="tablaCuentas"></div>';
+                return h;
+            }
+
+            function celdaDifPesos(dif, p) {
+                var clase = dif > 0 ? 'arriba' : dif < 0 ? 'abajo' : '';
+                var signo = dif > 0 ? '+' : dif < 0 ? '-' : '';
+                return '<span class="' + clase + '">' + flechaDe(dif) + ' ' + pctSigno(p) + '</span>' +
+                    '<span class="sub">' + signo + '$' + numFmt(Math.abs(dif), 0) + '</span>';
+            }
+            function pintarTablaCuentas() {
+                var d = datos, caja = document.getElementById('tablaCuentas');
+                if (!caja) return;
+                var lista = d.cuentas.filter(function (c) {return c.departamento === estado.depto;});
+                if (estado.filtro !== 'Todos') lista = lista.filter(function (c) {return c.color === estado.filtro;});
+                var q = estado.busqueda.trim().toLowerCase();
+                if (q) lista = lista.filter(function (c) {return (c.cuenta + ' ' + c.nombre).toLowerCase().indexOf(q) >= 0;});
+                var o = estado.orden.cuentas;
+                if (o) lista = ordenar(lista, o.col, o.dir, o.tipo);
+                else lista = lista.slice().sort(function (a, b) {
+                    var sa = SEVERIDAD[a.color] === undefined ? 9 : SEVERIDAD[a.color];
+                    var sb = SEVERIDAD[b.color] === undefined ? 9 : SEVERIDAD[b.color];
+                    return sa - sb || b.diferencia - a.diferencia;
+                });
+                if (!lista.length) {caja.innerHTML = '<div class="vacio">No hay cuentas con ese filtro.</div>'; return;}
+                var cols = [
+                    {k: 'nombre', t: 'Cuenta', tipo: 'texto'}, {k: 'gastado', t: 'Presupuestado → gastado', num: true, movil: false},
+                    {k: 'diferencia', t: 'Diferencia', num: true}, {k: 'color', t: 'Estado', tipo: 'texto', movil: false}
+                ];
+                var h = '<div class="tabla-caja"><table><thead><tr>';
+                cols.forEach(function (c) {
+                    var flecha = o && o.col === c.k ? (o.dir < 0 ? ' ▼' : ' ▲') : '';
+                    h += '<th tabindex="0" class="orden' + (c.num ? ' num' : '') + (c.movil === false ? ' no-movil' : '') + '" data-accion="ordenar" data-tabla="cuentas" data-col="' + c.k + '" data-tipo="' + (c.tipo === 'texto' ? 'texto' : 'num') + '">' + esc(c.t) + flecha + '</th>';
+                });
+                h += '</tr></thead><tbody>';
+                lista.forEach(function (c) {
+                    var sp = c.color === 'Gasto sin presupuesto';
+                    h += '<tr' + clic('cuenta', 'data-depto="' + encodeURIComponent(c.departamento) + '" data-cuenta="' + esc(c.cuenta) + '"') + '>' +
+                        '<td class="nombre"><strong>' + esc(c.nombre) + '</strong><span class="sub">' + esc(c.cuenta) + '</span><span class="solo-movil">' + insignia(c.color) + '<span class="sub">' + (sp ? 'Gastado ' + m0(c.gastado) : 'Presupuestado ' + m0(c.presupuestadoFecha) + ' → gastado ' + m0(c.gastado)) + '</span></span></td>' +
+                        '<td class="num no-movil">' + (sp ? 'Sin presupuesto → ' : m0(c.presupuestadoFecha) + ' → ') + m0(c.gastado) + '</td>' +
+                        '<td class="num">' + (sp ? RAYA : celdaDifPesos(c.diferencia, c.difPct)) + '</td>' +
+                        '<td class="no-movil">' + insignia(c.color) + '</td></tr>';
+                });
+                caja.innerHTML = h + '</tbody></table></div><div class="nota">' + lista.length + ' cuentas. Clic en una cuenta para ver los 12 meses y sus conceptos.</div>';
+            }
+
+            /* ---------- Detalle de cuenta ---------- */
+            function vistaCuenta(d) {
+                var c = d.cuentas.filter(function (x) {return x.departamento === estado.depto && x.cuenta === estado.cuenta;})[0];
+                if (!c) return '<div class="error">No encuentro la cuenta.</div>';
+                var det = d.detalle[clave(c.departamento, c.cuenta)];
+                var sp = c.color === 'Gasto sin presupuesto';
+                var h = '<div class="miga"><a tabindex="0" data-accion="vista" data-vista="departamentos">‹ Departamentos</a> › <a tabindex="0" data-accion="depto" data-depto="' + encodeURIComponent(c.departamento) + '">' + esc(c.departamento) + '</a> › <strong>' + esc(c.nombre) + '</strong></div>';
+                h += '<h2 class="titulo">¿Cómo se comportó esta cuenta?</h2>';
+                h += '<div class="kpis n3">' +
+                    '<div class="kpi"><div class="et">Estado</div><div class="val chico">' + insignia(c.color) + '</div><div class="sub" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><strong>' + esc(c.nombre) + '</strong></div><div class="sub">' + esc(c.cuenta) + '</div></div>' +
+                    '<div class="kpi"><div class="et">Presupuestado a la fecha</div><div class="val">' + (sp ? '—' : mc(c.presupuestadoFecha)) + '</div><div class="sub">' + (sp ? 'Sin presupuesto del año' : 'Año completo: ' + mc(c.presupuestoAnio)) + '</div></div>' +
+                    '<div class="kpi con"><div class="et">Gastado a la fecha</div><div class="val">' + mc(c.gastado) + '</div><div class="sub ' + (sp ? '' : c.diferencia > 0 ? 'arriba' : 'abajo') + '">' + (sp ? 'Todo es gasto sin presupuesto' : flechaDe(c.diferencia) + ' ' + pctSigno(c.difPct) + ' · ' + mc(Math.abs(c.diferencia))) + '</div></div>' +
+                    '</div>';
+                h += '<div class="kicker">Mes a mes</div><div class="tabla-caja"><table><thead><tr><th>Mes</th><th class="num no-movil">Presupuesto vigente</th><th class="num no-movil">Gasto real</th><th class="num">Diferencia</th></tr></thead><tbody>';
+                var totP = 0, fechaP = 0, fechaG = 0;
+                d.serieMensual.forEach(function (m, j) {
+                    var p = det.presupuestoMes[j], g = det.gastoMes[j];
+                    totP += p;
+                    if (m.cerrado) {
+                        fechaP += p; fechaG += g;
+                        h += '<tr><td>' + esc(m.mes) + '<span class="solo-movil"><span class="sub">Presupuesto ' + m0(p) + ' → gasto ' + m0(g) + '</span></span></td><td class="num no-movil">' + m0(p) + '</td><td class="num no-movil">' + m0(g) + '</td><td class="num">' + celdaDifSimple(g - p, p) + '</td></tr>';
+                    } else {
+                        h += '<tr><td>' + esc(m.mes) + '<span class="sub">Sin cargar</span><span class="solo-movil"><span class="sub">Presupuesto ' + m0(p) + '</span></span></td><td class="num no-movil">' + m0(p) + '</td><td class="num no-movil">—</td><td class="num">—</td></tr>';
+                    }
+                });
+                h += '<tr class="total"><td>A la fecha<span class="solo-movil"><span class="sub">Presupuesto ' + m0(fechaP) + ' → gasto ' + m0(fechaG) + '</span></span></td><td class="num no-movil">' + m0(fechaP) + '</td><td class="num no-movil">' + m0(fechaG) + '</td><td class="num">' + celdaDifSimple(fechaG - fechaP, fechaP) + '</td></tr>';
+                h += '<tr class="total"><td>Año completo<span class="solo-movil"><span class="sub">Presupuesto ' + m0(totP) + '</span></span></td><td class="num no-movil">' + m0(totP) + '</td><td class="no-movil"></td><td></td></tr></tbody></table></div>';
+
+                h += '<div class="kicker">Conceptos del presupuesto y su decisión</div>';
+                if (!det.conceptos.length) {
+                    h += '<div class="vacio">Esta cuenta no tiene presupuesto en el archivo del área. Todo su gasto cuenta como gasto sin presupuesto.</div>';
+                } else {
+                    h += '<div class="tabla-caja"><table><thead><tr><th>Concepto</th><th class="num">Presupuesto del año</th><th>Decisión</th><th class="no-movil">Motivo del cambio</th></tr></thead><tbody>';
+                    det.conceptos.forEach(function (k) {
+                        h += '<tr><td><strong>' + esc(k.concepto) + '</strong><span class="sub">' + esc(k.codigo) + ' · ' + esc(k.clase) + '</span></td><td class="num">' + m0(k.totalVigente) + '</td><td>' + insigniaDecision(k.decision) + '</td><td class="no-movil">' + esc(k.motivo) + '</td></tr>';
+                    });
+                    h += '</tbody></table></div>';
+                }
+                return h;
+            }
+            function celdaDifSimple(dif, pres) {
+                var clase = dif > 0 ? 'arriba' : dif < 0 ? 'abajo' : '';
+                var signo = dif > 0 ? '+' : dif < 0 ? '-' : '';
+                var monto = signo + '$' + numFmt(Math.abs(dif), 0);
+                if (pres && pres > 0) {
+                    var p = dif / pres;
+                    return '<span class="' + clase + '">' + flechaDe(dif) + ' ' + pctSigno(p) + '</span>' +
+                        '<span class="sub">' + monto + '</span>';
+                }
+                return '<span class="' + clase + '">' + flechaDe(dif) + ' ' + monto + '</span>';
+            }
+
+            /* ---------- Avisos ---------- */
+            function tablaAlertas(lista, idExpand) {
+                lista = ordenar(lista, 'diferencia', -1, 'num');
+                var expandida = estado.expandidas[idExpand];
+                var mostrar = expandida ? lista : lista.slice(0, 10);
+                var hayMas = lista.length > 10;
+                var h = '<div class="tabla-caja"><table><thead><tr><th>Cuenta</th><th class="num no-movil">Presupuestado → gastado</th><th class="num">Diferencia</th></tr></thead><tbody>';
+                mostrar.forEach(function (c) {
+                    h += '<tr' + clic('cuenta', 'data-depto="' + encodeURIComponent(c.departamento) + '" data-cuenta="' + esc(c.cuenta) + '"') + '>' +
+                        '<td class="nombre"><strong>' + esc(c.nombre) + '</strong><span class="sub">' + esc(c.departamento) + ' · ' + esc(c.cuenta) + '</span><span class="solo-movil"><span class="sub">Presupuestado ' + m0(c.presupuestadoFecha) + ' → gastado ' + m0(c.gastado) + '</span></span></td>' +
+                        '<td class="num no-movil">' + m0(c.presupuestadoFecha) + ' → ' + m0(c.gastado) + '</td>' +
+                        '<td class="num">' + celdaDifPesos(c.diferencia, c.difPct) + '</td></tr>';
+                });
+                h += '</tbody></table></div>';
+                if (hayMas) {
+                    var txt = expandida ? 'Ver solo top 10' : 'Ver todas (' + lista.length + ')';
+                    h += '<div style="text-align:center;margin-top:var(--e2)"><button type="button" class="verMas" data-accion="toggleExpand" data-id="' + esc(idExpand) + '">' + esc(txt) + '</button></div>';
+                }
+                return h;
+            }
+
+            // Tabla de cuentas sin presupuesto (lista detallada por cuenta, no por depto).
+            function tablaSinPresupuestoPorCuenta(d, idExpand) {
+                var lista = d.cuentas.filter(function (c) {return c.color === 'Gasto sin presupuesto';});
+                lista = lista.slice().sort(function (a, b) {return b.gastado - a.gastado;});
+                var expandida = estado.expandidas[idExpand];
+                var mostrar = expandida ? lista : lista.slice(0, 10);
+                var hayMas = lista.length > 10;
+                if (!lista.length) return '<div class="vacio">No hay gasto sin presupuesto.</div>';
+                var h = '<div class="tabla-caja"><table><thead><tr><th>Cuenta</th><th class="num">Gastado</th></tr></thead><tbody>';
+                mostrar.forEach(function (c) {
+                    h += '<tr' + clic('cuenta', 'data-depto="' + encodeURIComponent(c.departamento) + '" data-cuenta="' + esc(c.cuenta) + '"') + '>' +
+                        '<td class="nombre"><strong>' + esc(c.nombre) + '</strong><span class="sub">' + esc(c.departamento) + ' · ' + esc(c.cuenta) + '</span></td>' +
+                        '<td class="num"><strong>' + m0(c.gastado) + '</strong></td></tr>';
+                });
+                h += '</tbody></table></div>';
+                if (hayMas) {
+                    var txt = expandida ? 'Ver solo top 10' : 'Ver todas (' + lista.length + ')';
+                    h += '<div style="text-align:center;margin-top:var(--e2)"><button type="button" class="verMas" data-accion="toggleExpand" data-id="' + esc(idExpand) + '">' + esc(txt) + '</button></div>';
+                }
+                return h;
+            }
+
+            function tablaSinPresupuestoPorDepto(d) {
+                var porDepto = {};
+                d.cuentas.forEach(function (c) {
+                    if (c.color !== 'Gasto sin presupuesto') return;
+                    var x = porDepto[c.departamento] || (porDepto[c.departamento] = {nombre: c.departamento, cuentas: 0, gastado: 0});
+                    x.cuentas++; x.gastado += c.gastado;
+                });
+                var lista = ordenar(Object.keys(porDepto).map(function (k) {return porDepto[k];}), 'gastado', -1, 'num');
+                if (!lista.length) return '<div class="vacio">No hay gasto sin presupuesto.</div>';
+                var total = sumar(lista, function (x) {return x.gastado;});
+                var info = {};
+                d.departamentos.forEach(function (x) {info[x.nombre] = x;});
+                var h = '<div class="tabla-caja"><table><thead><tr><th>Departamento</th><th class="num no-movil">Cuentas</th><th class="num">Gasto sin presupuesto</th><th class="num">% del total</th></tr></thead><tbody>';
+                lista.forEach(function (x) {
+                    var i = info[x.nombre] || {};
+                    h += '<tr' + clic('depto', 'data-depto="' + encodeURIComponent(x.nombre) + '"') + '><td class="nombre"><strong>' + esc(x.nombre) + '</strong><span class="sub">' + esc(i.estado || 'Sin dato') + '</span></td>' +
+                        '<td class="num no-movil">' + x.cuentas + '</td><td class="num">' + m0(x.gastado) + '</td><td class="num">' + pct(total > 0 ? x.gastado / total : null) + '</td></tr>';
+                });
+                h += '<tr class="total"><td>Total</td><td class="num no-movil">' + sumar(lista, function (x) {return x.cuentas;}) + '</td><td class="num">' + m0(total) + '</td><td class="num">100.0%</td></tr>';
+                return h + '</tbody></table></div>';
+            }
+
+            function tablaPicos(d) {
+                var p = d.picos;
+                if (!p.disponible) return '<div class="vacio">No encuentro el bloque de picos en la hoja Avisos.</div>';
+                if (!p.filas.length) return '<div class="vacio">No hay pagos grandes marcados para ' + esc(p.mes || 'el próximo mes') + '.</div>';
+                var h = '<div class="tabla-caja"><table><thead><tr><th>Concepto</th><th class="num">Presupuesto del mes</th><th class="num no-movil">Promedio mensual</th><th class="num">Veces el promedio</th></tr></thead><tbody>';
+                p.filas.forEach(function (x) {
+                    h += '<tr><td class="nombre"><strong>' + esc(x.concepto) + '</strong><span class="sub">' + esc(x.departamento) + ' · ' + esc(x.codigo) + '</span></td>' +
+                        '<td class="num">' + m0(x.presupuestoMes) + '</td><td class="num no-movil">' + m0(x.promedio) + '</td><td class="num">' + numFmt(x.veces, 1) + ' veces</td></tr>';
+                });
+                return h + '</tbody></table></div>';
+            }
+
+            function vistaAvisos(d) {
+                var rojos = d.cuentas.filter(function (c) {return c.color === 'Rojo';});
+                var amar = d.cuentas.filter(function (c) {return c.color === 'Amarillo';});
+                var sinPres = d.cuentas.filter(function (c) {return c.color === 'Gasto sin presupuesto';});
+                var abajo = d.cuentas.filter(function (c) {return c.color !== 'Gasto sin presupuesto' && c.diferencia < 0;});
+                var sr = sumar(rojos, function (c) {return c.diferencia;});
+                var sa = sumar(amar, function (c) {return c.diferencia;});
+                var sSinPres = sumar(sinPres, function (c) {return c.gastado;});
+                var sAbajo = sumar(abajo, function (c) {return c.diferencia;});
+                // Helper para decidir si un <details> renderiza con "open" según el estado guardado.
+                function abierto(id) {return estado.seccionesAbiertas[id] ? ' open' : '';}
+                var h = '<h2 class="titulo">¿Qué debo atender primero?</h2>';
+
+                // Sección 1: Por explicar.
+                h += '<details class="plegable" id="ancla-arriba" data-seccion="ancla-arriba"' + abierto('ancla-arriba') + '><summary>▲ Por explicar (' + rojos.length + ')' + (rojos.length ? ' · +' + mc(sr) + ' arriba' : '') + '</summary>';
+                h += rojos.length ? tablaAlertas(rojos, 'rojos') : '<div class="vacio">Sin cuentas por explicar.</div>';
+                h += '</details>';
+
+                // Sección 2: Por revisar.
+                if (amar.length) {
+                    h += '<details class="plegable" data-seccion="ancla-revisar"' + abierto('ancla-revisar') + '><summary>◆ Por revisar (' + amar.length + ')' + (amar.length ? ' · +' + mc(sa) + ' arriba' : '') + '</summary>' + tablaAlertas(amar, 'amar') + '</details>';
+                } else {
+                    h += '<details class="plegable" data-seccion="ancla-revisar"' + abierto('ancla-revisar') + '><summary>◆ Por revisar (0)</summary><div class="vacio">Sin cuentas por revisar.</div></details>';
+                }
+
+                // Sección 3: Gasto sin presupuesto.
+                h += '<details class="plegable" id="ancla-sinpres" data-seccion="ancla-sinpres"' + abierto('ancla-sinpres') + '><summary>○ Gasto sin presupuesto (' + sinPres.length + ')' + (sinPres.length ? ' · ' + mc(sSinPres) + ' gastados' : '') + '</summary>';
+                h += tablaSinPresupuestoPorCuenta(d, 'sinpres');
+                h += '</details>';
+
+                // Sección 4: Cuentas abajo del presupuesto.
+                if (abajo.length) {
+                    h += '<details class="plegable" id="ancla-abajo" data-seccion="ancla-abajo"' + abierto('ancla-abajo') + '><summary>▼ Cuentas abajo del presupuesto (' + abajo.length + ') · ' + mc(sAbajo) + ' por debajo</summary>' + tablaAlertas(abajo, 'abajo') + '</details>';
+                }
+
+                // Sección 5: Pagos grandes del próximo mes.
+                var p = d.picos, mes = p.mes || 'el próximo mes';
+                h += '<h3 class="sec">Pagos grandes de ' + esc(mes) + '</h3>' + tablaPicos(d);
+                return h;
+            }
+
+            /* ---------- Panel y pastilla del filtro de departamentos ---------- */
+            function renderizarPanelDeptos() {
+                if (!datos) return;
+                var panel = document.getElementById('panelDeptos');
+                if (!panel) return;
+                var nombres = datos.departamentos.map(function (x) {return x.nombre;}).sort(function (a, b) {return a.localeCompare(b, 'es');});
+                var set = deptosActivos();
+                var h = '<div class="panel-acciones">' +
+                    '<button type="button" data-accion="filtroDeptosTodos">Todos</button>' +
+                    '<button type="button" data-accion="filtroDeptosNinguno">Ninguno</button></div>';
+                nombres.forEach(function (n) {
+                    h += '<label><input type="checkbox" data-accion="filtroDeptosToggle" data-nombre="' + esc(n) + '"' + (set[n] ? ' checked' : '') + '>' + esc(n) + '</label>';
+                });
+                panel.innerHTML = h;
+            }
+            function actualizarPastilla() {
+                if (!datos) return;
+                var p = document.getElementById('pastillaFiltro');
+                if (!p) return;
+                if (todosSeleccionados(datos)) {
+                    p.style.display = 'none';
+                } else {
+                    p.style.display = 'inline-block';
+                    p.textContent = (estado.filtroDeptos || []).length + ' de ' + datos.departamentos.length;
+                }
+            }
+            function abrirCerrarPanel(forzarCerrar) {
+                var panel = document.getElementById('panelDeptos');
+                var btn = document.getElementById('btnFiltroDepto');
+                if (!panel || !btn) return;
+                var abierto = !panel.classList.contains('oculto');
+                if (forzarCerrar || abierto) {
+                    panel.classList.add('oculto');
+                    btn.setAttribute('aria-expanded', 'false');
+                    estado.panelAbierto = false;
+                } else {
+                    panel.classList.remove('oculto');
+                    btn.setAttribute('aria-expanded', 'true');
+                    estado.panelAbierto = true;
+                }
+            }
+            function aplicarCambioFiltro() {
+                guardarFiltro(estado.filtroDeptos);
+                actualizarPastilla();
+                pintar(true);
+            }
+
+            /* ---------- Eventos ---------- */
+            function manejarAccion(el) {
+                var accion = el.getAttribute('data-accion');
+                if (accion === 'actualizar') {cargar(); return;}
+                if (accion === 'toggleFiltroDepto') {abrirCerrarPanel(false); return;}
+                if (!datos) return;
+                if (accion === 'filtroDeptosTodos') {
+                    estado.filtroDeptos = datos.departamentos.map(function (x) {return x.nombre;});
+                    renderizarPanelDeptos(); aplicarCambioFiltro(); return;
+                }
+                if (accion === 'filtroDeptosNinguno') {
+                    estado.filtroDeptos = [];
+                    renderizarPanelDeptos(); aplicarCambioFiltro(); return;
+                }
+                if (accion === 'filtroDeptosToggle') {
+                    var nombre = el.getAttribute('data-nombre');
+                    var idx = estado.filtroDeptos.indexOf(nombre);
+                    if (idx >= 0) estado.filtroDeptos.splice(idx, 1);
+                    else estado.filtroDeptos.push(nombre);
+                    aplicarCambioFiltro(); return;
+                }
+                if (accion === 'toggleExpand') {
+                    var id = el.getAttribute('data-id');
+                    estado.expandidas[id] = !estado.expandidas[id];
+                    pintar(true);
+                    return;
+                }
+                if (accion === 'irAvisos') {
+                    var ancla = el.getAttribute('data-ancla');
+                    estado.vista = 'avisos'; estado.depto = null; estado.cuenta = null;
+                    // Marca la sección destino como abierta ANTES de pintar, así se renderiza con "open".
+                    estado.seccionesAbiertas['ancla-' + ancla] = true;
+                    pintar();
+                    setTimeout(function () {
+                        var destino = document.getElementById('ancla-' + ancla);
+                        if (destino) destino.scrollIntoView({behavior: 'smooth', block: 'start'});
+                    }, 50);
+                    return;
+                }
+                if (accion === 'vista') {
+                    estado.vista = el.getAttribute('data-vista'); estado.depto = null; estado.cuenta = null;
+                } else if (accion === 'depto') {
+                    estado.vista = 'departamento'; estado.depto = decodeURIComponent(el.getAttribute('data-depto')); estado.cuenta = null;
+                    estado.filtro = 'Todos'; estado.busqueda = ''; delete estado.orden.cuentas;
+                } else if (accion === 'cuenta') {
+                    estado.vista = 'cuenta'; estado.depto = decodeURIComponent(el.getAttribute('data-depto')); estado.cuenta = el.getAttribute('data-cuenta');
+                } else if (accion === 'filtro') {
+                    estado.filtro = el.getAttribute('data-color');
+                    pintar(true); return;
+                } else if (accion === 'ordenar') {
+                    var tabla = el.getAttribute('data-tabla'), col = el.getAttribute('data-col'), tipo = el.getAttribute('data-tipo');
+                    var o = estado.orden[tabla];
+                    estado.orden[tabla] = {col: col, tipo: tipo, dir: o && o.col === col ? -o.dir : (tipo === 'texto' ? 1 : -1)};
+                    if (tabla === 'cuentas') {pintarTablaCuentas(); return;}
+                    pintar(true); return;
+                }
+                pintar();
+            }
+            document.addEventListener('click', function (e) {
+                // El <select> del filtro de impacto no debe propagarse al <th> que es clickeable para ordenar.
+                if (e.target && e.target.tagName === 'SELECT' && e.target.getAttribute('data-accion') === 'filtroImpacto') {
+                    e.stopPropagation();
+                    return;
+                }
+                var el = e.target.closest ? e.target.closest('[data-accion]') : null;
+                if (el) {manejarAccion(el); return;}
+                // Cierra el panel del filtro si el clic cae fuera de él y de su botón.
+                if (estado.panelAbierto) {
+                    var dentroDelFiltro = e.target.closest && e.target.closest('.filtro-depto');
+                    if (!dentroDelFiltro) abrirCerrarPanel(true);
+                }
+            });
+            document.addEventListener('keydown', function (e) {
+                if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.getAttribute && e.target.getAttribute('data-accion') && e.target.tagName !== 'BUTTON') {
+                    e.preventDefault();
+                    manejarAccion(e.target);
+                }
+            });
+            document.addEventListener('input', function (e) {
+                if (e.target && e.target.id === 'buscador') {estado.busqueda = e.target.value; pintarTablaCuentas();}
+            });
+            document.addEventListener('change', function (e) {
+                if (e.target && e.target.getAttribute && e.target.getAttribute('data-accion') === 'filtroImpacto') {
+                    estado.filtroImpacto = e.target.value;
+                    pintar(true);
+                }
+            });
+            // El evento "toggle" dispara cada vez que el usuario abre o cierra un <details>.
+            // Lo capturamos en el documento con captura en true porque <details> no lo bubble-ea.
+            document.addEventListener('toggle', function (e) {
+                if (e.target && e.target.tagName === 'DETAILS' && e.target.hasAttribute('data-seccion')) {
+                    var id = e.target.getAttribute('data-seccion');
+                    estado.seccionesAbiertas[id] = e.target.open;
+                }
+            }, true);
+            window.__tablero = {cargar: cargar, estado: estado};
+            cargar();
+        })();
+    </script>
+</body>
+
+</html>
