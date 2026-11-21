@@ -1392,6 +1392,45 @@
             var datos = null;
             var estado = {vista: 'resumen', depto: null, cuenta: null, filtro: 'Todos', busqueda: '', orden: {}, filtroDeptos: null, panelAbierto: false, filtroImpacto: 'Todos', expandidas: {}, seccionesAbiertas: {}};
 
+            // ---- Sincronización con el hash del navegador ----
+            // El hash guarda la vista actual para que los botones atrás/adelante funcionen.
+            function estadoDesdeHash() {
+                var h = (location.hash || '').replace(/^#\/?/, '');
+                if (!h) return {vista: 'resumen', depto: null, cuenta: null};
+                var partes = h.split('/').map(decodeURIComponent);
+                var vista = partes[0];
+                if (vista === 'cuenta' && partes.length >= 3) return {vista: 'cuenta', depto: partes[1], cuenta: partes[2]};
+                if (vista === 'departamento' && partes.length >= 2) return {vista: 'departamento', depto: partes[1], cuenta: null};
+                if (vista === 'departamentos' || vista === 'avisos' || vista === 'resumen') return {vista: vista, depto: null, cuenta: null};
+                return {vista: 'resumen', depto: null, cuenta: null};
+            }
+
+            function hashDesdeEstado() {
+                if (estado.vista === 'cuenta') return 'cuenta/' + encodeURIComponent(estado.depto) + '/' + encodeURIComponent(estado.cuenta);
+                if (estado.vista === 'departamento') return 'departamento/' + encodeURIComponent(estado.depto);
+                return estado.vista;
+            }
+
+            var ignorarHashChange = false;
+            function actualizarHash() {
+                var nuevo = '#' + hashDesdeEstado();
+                if (location.hash === nuevo) return;
+                ignorarHashChange = true;
+                history.pushState(null, '', nuevo);
+                setTimeout(function () {ignorarHashChange = false;}, 50);
+            }
+
+            window.addEventListener('hashchange', function () {
+                if (ignorarHashChange) return;
+                if (!datos) return;
+                var e = estadoDesdeHash();
+                estado.vista = e.vista;
+                estado.depto = e.depto;
+                estado.cuenta = e.cuenta;
+                if (estado.vista === 'departamento') {estado.filtro = 'Todos'; estado.busqueda = '';}
+                pintar();
+            });
+
             /* ---------- Filtro de departamentos (persistencia + utilidades) ---------- */
             var CLAVE_FILTRO = 'agrisem.filtroDeptos';
             function cargarFiltroGuardado() {
@@ -1563,6 +1602,11 @@
                         inicializarFiltroDeptos(d);
                         renderizarPanelDeptos();
                         actualizarPastilla();
+                        // Lee el estado desde el hash de la URL (si venía con #cuenta/... etc.)
+                        var e = estadoDesdeHash();
+                        estado.vista = e.vista;
+                        estado.depto = e.depto;
+                        estado.cuenta = e.cuenta;
                         pintar();
                     })
                     .catch(function (e) {
@@ -1591,6 +1635,7 @@
                 document.getElementById('contenido').innerHTML = html + pie(d);
                 if (estado.vista === 'departamento') pintarTablaCuentas();
                 if (!sinScroll) window.scrollTo(0, 0);
+                actualizarHash();
             }
 
             function subtituloHeader(d) {
